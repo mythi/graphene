@@ -905,6 +905,7 @@ static int load_enclave(struct pal_enclave* enclave, char* args, size_t args_siz
         return online_logical_cores;
     pal_sec->online_logical_cores = online_logical_cores;
 
+    log_warning("DEBUG: online_logical_core: %d", online_logical_cores);
     int possible_logical_cores = get_hw_resource("/sys/devices/system/cpu/possible",
                                                  /*count=*/true);
     if (possible_logical_cores < 0)
@@ -948,8 +949,10 @@ static int load_enclave(struct pal_enclave* enclave, char* args, size_t args_siz
     pal_sec->cpu_socket = cpu_socket;
 
     ret = get_topology_info(&pal_sec->topo_info);
-    if (ret < 0)
-        return ret;
+    log_warning("DEBUG: get_topology_info: %d", ret);
+    if (ret < 0) {
+	    log_warning("DEBUG: set topo_info to NULL");
+    }
 
 #ifdef DEBUG
     size_t env_i = 0;
